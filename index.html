@@ -26,8 +26,8 @@
     font-size: 2rem;
     text-align: center;
     display: none;
-    font-weight: 700; /* más grueso */
-    color: #B38FFF; /* más luminoso */
+    font-weight: 700;
+    color: #B38FFF;
     text-shadow: 0 0 15px #B38FFF, 0 0 30px #4B9CD3;
     -webkit-text-stroke: 0.5px #4B9CD3;
   }
@@ -69,14 +69,23 @@
   #bonusMessage {
     margin-top: 30px;
     font-size: 1.5rem;
-    font-weight: 600; 
-    color: #C0A0FF; /* más luminoso */
+    font-weight: 600;
+    color: #C0A0FF;
     display: none;
     text-align: center;
     max-width: 80%;
     white-space: pre-wrap;
     text-shadow: 0 0 15px #C0A0FF, 0 0 30px #4B9CD3;
     -webkit-text-stroke: 0.5px #4B9CD3;
+    position: relative;
+  }
+  .rastro {
+    position: absolute;
+    opacity: 0.6;
+    color: #9F6CFF;
+    text-shadow: 0 0 8px #9F6CFF, 0 0 16px #4B9CD3;
+    pointer-events: none;
+    transition: opacity 1s ease-out;
   }
   .access-denied {
     color: red;
@@ -161,34 +170,36 @@
     startBtn.style.display = "none";
     startTitle.style.display = "none";
     step1Message.style.display = "block";
-    // espera 5 segundos antes de mostrar la terminal
     setTimeout(() => {
       step1Message.style.display = "none";
       bonusTerminal.style.display = "block";
       input.focus();
-    }, 4000);
+    }, 5000);
   });
 
+  // ===== Máquina de escribir con rastro fugaz =====
   function typeWriter(text, element) {
     element.textContent = "";
     let i = 0;
     function escribir() {
       if (i < text.length) {
         const char = text.charAt(i);
-        if (text.substring(i, i + 10) === "desaparec") {
-          element.innerHTML += '<span class="blink">' + char + '</span>';
-        } else if (text.substring(i, i + 5) === "pelig") {
-          element.innerHTML += '<span class="blink">' + char + '</span>';
-        } else {
-          element.innerHTML += char;
-        }
+        element.textContent += char;
+
+        // Crear rastro
+        const span = document.createElement('span');
+        span.className = 'rastro';
+        span.textContent = char;
+        element.appendChild(span);
+        span.style.left = (element.offsetWidth - span.offsetWidth) + 'px';
+        span.style.top = '0px';
+        setTimeout(() => span.style.opacity = 0, 800);
+        setTimeout(() => span.remove(), 1200);
+
         i++;
-        // máquina de escribir más rápida para emoción
         let delay = 20 + Math.random() * 40;
         if (char === ',' || char === '.') delay += 200;
         if (char === ' ') delay += 30;
-        if (text.substring(i-1, i+8) === "desaparec") delay += 150;
-        if (text.substring(i-1, i+5) === "pelig") delay += 150;
         setTimeout(escribir, delay);
       }
     }
