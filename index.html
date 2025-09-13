@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Experiencia Interactiva</title>
+<title>Experiencia Interactiva Mejorada</title>
 <style>
   body {
     margin: 0;
@@ -55,6 +55,12 @@
     border-radius: 10px;
     text-align: center;
     display: none;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+  }
+  .terminal.show {
+    display: block;
+    opacity: 1;
   }
   input {
     background: #0D0B1D;
@@ -77,6 +83,8 @@
     white-space: pre-wrap;
     text-shadow: 0 0 15px #C0A0FF, 0 0 30px #4B9CD3;
     -webkit-text-stroke: 0.5px #4B9CD3;
+    max-height: 60vh;
+    overflow-y: auto;
     position: relative;
   }
   .rastro {
@@ -172,12 +180,12 @@
     step1Message.style.display = "block";
     setTimeout(() => {
       step1Message.style.display = "none";
-      bonusTerminal.style.display = "block";
+      bonusTerminal.classList.add('show');
       input.focus();
     }, 5000);
   });
 
-  // ===== Máquina de escribir con rastro fugaz =====
+  // ===== Máquina de escribir con rastro disperso =====
   function typeWriter(text, element) {
     element.textContent = "";
     let i = 0;
@@ -186,13 +194,13 @@
         const char = text.charAt(i);
         element.textContent += char;
 
-        // Crear rastro
+        // Crear rastro disperso
         const span = document.createElement('span');
         span.className = 'rastro';
         span.textContent = char;
         element.appendChild(span);
         span.style.left = (element.offsetWidth - span.offsetWidth) + 'px';
-        span.style.top = '0px';
+        span.style.top = Math.random() * element.offsetHeight + 'px';
         setTimeout(() => span.style.opacity = 0, 800);
         setTimeout(() => span.remove(), 1200);
 
@@ -211,7 +219,7 @@
     if (val === "UN BESO") {
       denied.style.display = "none";
       hint.style.display = "none";
-      bonusTerminal.style.display = "none";
+      bonusTerminal.classList.remove('show');
 
       const finalMessage = `Apareces después de años y la advertencia interna sigue sonando: ¡peligro!.\nPero sabes, lo raro no es que estemos hablando otra vez....lo raro es que siga sintiendo que contigo todo puede volverse un lío divertido.\nAhora dime, ¿seguimos siendo peligrosos o nos comportamos?`;
 
