@@ -8,8 +8,8 @@
   body {
     margin: 0;
     height: 100vh;
-    background: #0D0B1D; /* Fondo oscuro */
-    color: #8A2BE2;       /* Texto morado */
+    background: #0D0B1D;
+    color: #8A2BE2;
     font-family: "Courier New", monospace;
     display: flex;
     flex-direction: column;
@@ -35,7 +35,7 @@
     font-size: 2rem;
     font-weight: bold;
     color: #fff;
-    background: #6A5ACD; /* azul-morado */
+    background: #6A5ACD;
     border: 3px solid #4B9CD3;
     border-radius: 10px;
     cursor: pointer;
@@ -68,6 +68,7 @@
   #bonusMessage {
     margin-top: 30px;
     font-size: 1.5rem;
+    font-weight: 600; /* un poco más grueso */
     color: #8A2BE2;
     display: none;
     text-align: center;
@@ -109,13 +110,13 @@
 <div id="bonusMessage"></div>
 
 <script>
-  // ===== Fondo Matrix optimizado =====
+  // ===== Fondo Matrix con 0 y 1 =====
   const canvas = document.getElementById("matrix");
   const ctx = canvas.getContext("2d");
   let width = canvas.width = window.innerWidth;
   let height = canvas.height = window.innerHeight;
 
-  const chars = "1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1".split("");
+  const chars = "01".split("");
   const font_size = 14;
   const columns = Math.floor(width / font_size);
   const drops = Array(columns).fill(1);
@@ -158,11 +159,12 @@
     startBtn.style.display = "none";
     startTitle.style.display = "none";
     step1Message.style.display = "block";
+    // espera 5 segundos antes de mostrar la terminal
     setTimeout(() => {
       step1Message.style.display = "none";
       bonusTerminal.style.display = "block";
       input.focus();
-    }, 2000);
+    }, 5000);
   });
 
   function typeWriter(text, element) {
@@ -171,7 +173,6 @@
     function escribir() {
       if (i < text.length) {
         const char = text.charAt(i);
-        // efecto parpadeo en palabras clave
         if (text.substring(i, i + 10) === "desaparec") {
           element.innerHTML += '<span class="blink">' + char + '</span>';
         } else if (text.substring(i, i + 5) === "pelig") {
@@ -180,11 +181,12 @@
           element.innerHTML += char;
         }
         i++;
-        let delay = 50 + Math.random() * 150;
-        if (char === ',' || char === '.') delay += 400;
-        if (char === ' ') delay += 50;
-        if (text.substring(i-1, i+8) === "desaparec") delay += 300;
-        if (text.substring(i-1, i+5) === "pelig") delay += 300;
+        // aceleramos la velocidad
+        let delay = 25 + Math.random() * 50; 
+        if (char === ',' || char === '.') delay += 200;
+        if (char === ' ') delay += 30;
+        if (text.substring(i-1, i+8) === "desaparec") delay += 150;
+        if (text.substring(i-1, i+5) === "pelig") delay += 150;
         setTimeout(escribir, delay);
       }
     }
@@ -216,3 +218,4 @@
 
 </body>
 </html>
+
