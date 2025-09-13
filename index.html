@@ -9,7 +9,6 @@
     margin: 0;
     height: 100vh;
     background: #0D0B1D;
-    color: #8A2BE2;
     font-family: "Courier New", monospace;
     display: flex;
     flex-direction: column;
@@ -26,9 +25,11 @@
   h1 {
     font-size: 2rem;
     text-align: center;
-    color: #8A2BE2;
-    text-shadow: 0 0 10px #4B9CD3;
     display: none;
+    font-weight: 700; /* más grueso */
+    color: #B38FFF; /* más luminoso */
+    text-shadow: 0 0 15px #B38FFF, 0 0 30px #4B9CD3;
+    -webkit-text-stroke: 0.5px #4B9CD3;
   }
   .button-purple {
     padding: 20px 50px;
@@ -68,13 +69,14 @@
   #bonusMessage {
     margin-top: 30px;
     font-size: 1.5rem;
-    font-weight: 600; /* un poco más grueso */
-    color: #8A2BE2;
+    font-weight: 600; 
+    color: #C0A0FF; /* más luminoso */
     display: none;
     text-align: center;
     max-width: 80%;
     white-space: pre-wrap;
-    text-shadow: 0 0 5px #4B9CD3;
+    text-shadow: 0 0 15px #C0A0FF, 0 0 30px #4B9CD3;
+    -webkit-text-stroke: 0.5px #4B9CD3;
   }
   .access-denied {
     color: red;
@@ -164,7 +166,7 @@
       step1Message.style.display = "none";
       bonusTerminal.style.display = "block";
       input.focus();
-    }, 5000);
+    }, 4000);
   });
 
   function typeWriter(text, element) {
@@ -181,8 +183,8 @@
           element.innerHTML += char;
         }
         i++;
-        // aceleramos la velocidad
-        let delay = 25 + Math.random() * 50; 
+        // máquina de escribir más rápida para emoción
+        let delay = 20 + Math.random() * 40;
         if (char === ',' || char === '.') delay += 200;
         if (char === ' ') delay += 30;
         if (text.substring(i-1, i+8) === "desaparec") delay += 150;
