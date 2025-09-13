@@ -95,36 +95,41 @@
 <div id="bonusMessage"></div>
 
 <script>
-  // Fondo Matrix
+  // ===== Fondo Matrix optimizado =====
   const canvas = document.getElementById("matrix");
   const ctx = canvas.getContext("2d");
-  canvas.height = window.innerHeight;
-  canvas.width = window.innerWidth;
+  let width = canvas.width = window.innerWidth;
+  let height = canvas.height = window.innerHeight;
+
   const chars = "アァイィウヴエェオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモヤユヨラリルレロワン".split("");
   const font_size = 14;
-  const columns = canvas.width / font_size;
-  const drops = [];
-  for (let x = 0; x < columns; x++) drops[x] = 1;
-  function draw() {
+  const columns = Math.floor(width / font_size);
+  const drops = Array(columns).fill(1);
+
+  function drawMatrix() {
     ctx.fillStyle = "rgba(0,0,0,0.05)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, width, height);
+
     ctx.fillStyle = "#0f0";
-    ctx.font = font_size + "px arial";
+    ctx.font = font_size + "px monospace";
+
     for (let i = 0; i < drops.length; i++) {
       const text = chars[Math.floor(Math.random() * chars.length)];
       ctx.fillText(text, i * font_size, drops[i] * font_size);
-      if (drops[i] * font_size > canvas.height && Math.random() > 0.975)
-        drops[i] = 0;
+      if (drops[i] * font_size > height && Math.random() > 0.975) drops[i] = 0;
       drops[i]++;
     }
+
+    requestAnimationFrame(drawMatrix);
   }
-  setInterval(draw, 35);
+  drawMatrix();
+
   window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
   });
 
-  // Flujo interactivo
+  // ===== Flujo interactivo =====
   const startBtn = document.getElementById("startBtn");
   const startTitle = document.getElementById("startTitle");
   const step1Message = document.getElementById("step1Message");
@@ -144,6 +149,7 @@
     setTimeout(() => {
       step1Message.style.display = "none";
       bonusTerminal.style.display = "block";
+      input.focus();
     }, 2000);
   });
 
@@ -158,7 +164,7 @@
   }
 
   function checkWord() {
-    let val = input.value.trim().toUpperCase();
+    const val = input.value.trim().toUpperCase();
     if (val === "UN BESO") {
       denied.style.display = "none";
       hint.style.display = "none";
@@ -180,9 +186,7 @@ Ahora dime, ¿seguimos siendo peligrosos o nos comportamos?`;
   input.addEventListener("keydown", (e) => {
     if (e.key === "Enter") checkWord();
   });
-
 </script>
 
 </body>
 </html>
-
