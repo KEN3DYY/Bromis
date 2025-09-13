@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Bromita Interactiva</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: black;
+      color: limegreen;
+      font-family: "Courier New", monospace;
+      overflow: hidden;
+    }
+
+    #console {
+      font-size: 1.2rem;
+      white-space: pre-line;
+      padding: 20px;
+      max-width: 900px;
+      text-align: left;
+    }
+
+    #mainContent {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      color: white;
+      font-family: "Comic Sans MS", sans-serif;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+    }
+
+    #bigButton {
+      padding: 2rem 4rem;
+      font-size: 2rem;
+      font-weight: bold;
+      color: white;
+      background-color: red;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      animation: pulse 1.2s infinite;
+      box-shadow: 0 0 20px rgba(255,0,0,0.6);
+      transition: transform 0.08s ease;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+
+    #message {
+      display: none;
+      font-size: 2.6rem;
+      font-weight: bold;
+      color: yellow;
+      text-shadow: 3px 3px 8px rgba(0,0,0,0.9);
+      margin-top: 2.5rem;
+      white-space: pre-line;
+      max-width: 90%;
+    }
+
+    /* small responsive tweaks */
+    @media (max-width: 600px) {
+      #bigButton { padding: 1.4rem 2rem; font-size: 1.4rem; border-radius: 16px; }
+      #message { font-size: 1.6rem; }
+      h1 { font-size: 1.2rem; }
+      #console { font-size: 1rem; padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="console" aria-hidden="true"></div>
+
+  <div id="mainContent" role="main" aria-live="polite">
+    <h1>PRESIÓNALO PARA VOLVER A COMENZAR</h1>
+    <button id="bigButton" aria-label="Botón grande rojo">¡GRAN BOTÓN ROJO!</button>
+    <div id="message" role="status" aria-atomic="true"></div>
+  </div>
+
+  <script>
+    const consoleDiv = document.getElementById("console");
+    const mainContent = document.getElementById("mainContent");
+    const button = document.getElementById("bigButton");
+    const message = document.getElementById("message");
+
+    // Texto inicial estilo hacker (suspenso)
+    const introLines = [
+      "Iniciando protocolo de reinicio...",
+      "Verificando sistema...",
+      "Autenticando usuario...",
+      "Cargando interfaz principal..."
+    ];
+
+    let i = 0;
+    function typeConsole() {
+      if (i < introLines.length) {
+        consoleDiv.innerHTML += introLines[i] + "\n";
+        i++;
+        // ritmo variable para más realismo
+        setTimeout(typeConsole, 1200 + Math.random()*800);
+      } else {
+        setTimeout(() => {
+          // transicion suave
+          consoleDiv.style.transition = "opacity 0.6s ease";
+          consoleDiv.style.opacity = "0";
+          setTimeout(() => { consoleDiv.style.display = "none"; mainContent.style.display = "flex"; }, 600);
+        }, 900);
+      }
+    }
+    typeConsole();
+
+    // Función para escribir con efecto "máquina de escribir"
+    function typeWriter(targetEl, text, speed=60, callback=null) {
+      targetEl.innerHTML = "";
+      targetEl.style.display = "block";
+      let idx = 0;
+      const t = setInterval(() => {
+        if (idx < text.length) {
+          targetEl.innerHTML += text.charAt(idx);
+          idx++;
+        } else {
+          clearInterval(t);
+          if (callback) callback();
+        }
+      }, speed);
+    }
+
+    // Botón - comportamiento
+    button.addEventListener("click", () => {
+      // pequeño feedback visual
+      button.style.transform = "scale(0.98)";
+      setTimeout(()=> button.style.transform = "", 80);
+
+      // mensaje principal (troll)
+      const text = "A PROPÓSITO...\n¿QUÉ SE SUPONE QUE VAMOS A COMENZAR? JAJAJAJAJA 😂🔥";
+
+      // ocultar el botón para dramatizar mientras se escribe
+      button.disabled = true;
+      button.style.opacity = "0.6";
+
+      typeWriter(message, text, 55, () => {
+        // después de escribir, dejamos todo visible y activamos doble-click para mensaje alternativo
+        button.disabled = false;
+        button.style.opacity = "1";
+        // si hace doble click en menos de 1.2s mostramos mensaje tierno
+      });
+    });
+
+    // comportamiento opcional: doble clic para versión tierna
+    let lastClick = 0;
+    button.addEventListener("click", () => {
+      const now = Date.now();
+      if (now - lastClick < 800) {
+        // doble click detectado
+        const alt = "JAJA, YA VOLVIMOS A COMENZAR...\nPERO TE EXTRAÑÉ, Y ESO NO SE REINICIA NUNCA 💕";
+        typeWriter(message, alt, 45);
+      }
+      lastClick = now;
+    });
+
+    // huevo de pascua: mensaje si abre la consola
+    // (no invasivo; solo un pequeño texto en console.log)
+    console.log("%cHey! Buen ojo por abrir la consola. 😉
+Si querías un mensaje especial, te lo mereces.", "color: lime; font-weight: bold; font-size: 14px;");
+  </script>
+</body>
+</html>
