@@ -54,6 +54,16 @@
       outline: none;
       margin-top: 10px;
     }
+    button {
+      margin-top: 10px;
+      padding: 8px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      background: black;
+      color: #0f0;
+      border: 2px solid #0f0;
+      border-radius: 5px;
+    }
     #message {
       margin-top: 30px;
       font-size: 2rem;
@@ -75,6 +85,7 @@
   <div class="terminal">
     <label for="keyword">Ingresa la palabra:</label><br>
     <input type="text" id="keyword" autocomplete="off">
+    <button id="revealBtn">Revelar</button>
     <div class="access-denied" id="denied">ACCESS DENIED</div>
   </div>
 
@@ -110,43 +121,50 @@
     const input = document.getElementById("keyword");
     const message = document.getElementById("message");
     const denied = document.getElementById("denied");
+    const btn = document.getElementById("revealBtn");
+
+    function checkWord() {
+      let val = input.value.trim().toUpperCase();
+      if (val === "BESO") {
+        denied.style.display = "none";
+        message.style.display = "block";
+        message.style.animation = "glitch 0.5s infinite";
+        // confetti básico
+        for (let i = 0; i < 100; i++) {
+          setTimeout(() => {
+            const conf = document.createElement("div");
+            conf.innerHTML = "💚";
+            conf.style.position = "fixed";
+            conf.style.left = Math.random() * 100 + "vw";
+            conf.style.top = "-5vh";
+            conf.style.fontSize = "24px";
+            conf.style.animation = "fall 3s linear forwards";
+            document.body.appendChild(conf);
+            setTimeout(() => conf.remove(), 3000);
+          }, i * 50);
+        }
+      } else {
+        denied.style.display = "block";
+        message.style.display = "none";
+      }
+    }
 
     input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        let val = input.value.trim().toUpperCase();
-        if (val === "BESO") {
-          denied.style.display = "none";
-          message.style.display = "block";
-          message.style.animation = "glitch 0.5s infinite";
-          // confetti básico
-          for (let i = 0; i < 100; i++) {
-            setTimeout(() => {
-              const conf = document.createElement("div");
-              conf.innerHTML = "💚";
-              conf.style.position = "fixed";
-              conf.style.left = Math.random() * 100 + "vw";
-              conf.style.top = "-5vh";
-              conf.style.fontSize = "24px";
-              conf.style.animation = "fall 3s linear forwards";
-              document.body.appendChild(conf);
-              setTimeout(() => conf.remove(), 3000);
-            }, i * 50);
-          }
-        } else {
-          denied.style.display = "block";
-          message.style.display = "none";
-        }
-      }
+      if (e.key === "Enter") checkWord();
     });
+
+    btn.addEventListener("click", checkWord);
 
     // Animación confetti
     const style = document.createElement("style");
-    style.innerHTML = `
-      @keyframes fall {
-        to { transform: translateY(110vh) rotate(360deg); }
-      }
-    `;
+    style.innerHTML = `@keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }`;
     document.head.appendChild(style);
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
   </script>
 </body>
 </html>
+
