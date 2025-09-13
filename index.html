@@ -1,8 +1,127 @@
-<!doctype html>
-<html>
-<head><meta charset="utf-8"><title>Prueba Pages</title></head>
-<body style="background:#111;color:#fff;font-family:Arial;text-align:center;padding-top:100px;">
-  <h1>PRUEBA: GitHub Pages funciona ✅</h1>
-  <p>Si ves esto, GitHub Pages sirve el index.html correctamente.</p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Bromita Interactiva</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: black;
+      color: limegreen;
+      font-family: "Courier New", monospace;
+      overflow: hidden;
+    }
+
+    #console {
+      font-size: 1.2rem;
+      white-space: pre-line;
+    }
+
+    #mainContent {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      color: white;
+      font-family: "Comic Sans MS", sans-serif;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+    }
+
+    #bigButton {
+      padding: 2rem 4rem;
+      font-size: 2rem;
+      font-weight: bold;
+      color: white;
+      background-color: red;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      animation: pulse 1.5s infinite;
+      box-shadow: 0 0 20px rgba(255,0,0,0.6);
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    #message {
+      display: none;
+      font-size: 3rem;
+      font-weight: bold;
+      color: yellow;
+      text-shadow: 3px 3px 8px black;
+      margin-top: 3rem;
+      white-space: pre-line;
+    }
+  </style>
+</head>
+<body>
+  <div id="console"></div>
+
+  <div id="mainContent">
+    <h1>PRESIÓNALO PARA VOLVER A COMENZAR</h1>
+    <button id="bigButton">¡GRAN BOTÓN ROJO!</button>
+    <div id="message"></div>
+  </div>
+
+  <script>
+    const consoleDiv = document.getElementById("console");
+    const mainContent = document.getElementById("mainContent");
+    const button = document.getElementById("bigButton");
+    const message = document.getElementById("message");
+
+    // Texto inicial estilo hacker
+    const introLines = [
+      "Iniciando protocolo de reinicio...",
+      "Verificando sistema...",
+      "Autenticando usuario...",
+      "Cargando interfaz principal..."
+    ];
+
+    let i = 0;
+    function typeConsole() {
+      if (i < introLines.length) {
+        consoleDiv.innerHTML += introLines[i] + "\n";
+        i++;
+        setTimeout(typeConsole, 1500);
+      } else {
+        setTimeout(() => {
+          consoleDiv.style.display = "none";
+          mainContent.style.display = "flex";
+        }, 1000);
+      }
+    }
+    typeConsole();
+
+    // Evento del botón rojo
+    button.addEventListener("click", () => {
+      const text = "A PROPÓSITO...\n¿QUÉ SE SUPONE QUE VAMOS A COMENZAR? JAJAJAJAJA 😂🔥";
+      message.innerHTML = "";
+      message.style.display = "block";
+
+      let j = 0;
+      const typer = setInterval(() => {
+        if (j < text.length) {
+          message.innerHTML += text.charAt(j);
+          j++;
+        } else {
+          clearInterval(typer);
+        }
+      }, 70);
+    });
+  </script>
 </body>
 </html>
