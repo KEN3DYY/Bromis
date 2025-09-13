@@ -1,398 +1,152 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Bromita Ultra — Presioname</title>
-<style>
-  :root{
-    --bg:#000;
-    --green:#7CFC00;
-    --accent:#ff3b3b;
-    --yellow:#ffd700;
-    --pink:#ff66aa;
-  }
-  html,body{height:100%;margin:0;background:var(--bg);font-family: "Courier New", monospace;color:var(--green);overflow:hidden}
-  /* matrix rain */
-  canvas#matrix{position:fixed;inset:0;z-index:0;opacity:0.12}
-  /* terminal box */
-  .terminal{
-    position:relative;
-    z-index:2;
-    width:min(980px,95%);
-    margin:6vh auto 0;
-    background:linear-gradient(180deg,rgba(0,0,0,0.85),rgba(0,0,0,0.6));
-    border:1px solid rgba(0,255,0,0.06);
-    box-shadow:0 10px 40px rgba(0,0,0,0.8), inset 0 0 40px rgba(0,255,0,0.02);
-    padding:22px;
-    border-radius:10px;
-    backdrop-filter: blur(4px);
-  }
-  .term-head{display:flex;gap:10px;align-items:center;margin-bottom:10px}
-  .dot{width:12px;height:12px;border-radius:50%}
-  .dot.r{background:#ff5f56}.dot.y{background:#ffbd2e}.dot.g{background:#27c93f}
-  .term-body{min-height:140px;line-height:1.45;font-size:15px;white-space:pre-wrap;overflow:hidden}
-  .muted{color:rgba(124,252,0,0.55);font-size:13px}
-  /* center stage */
-  .stage{
-    position:relative;
-    z-index:3;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:12px;
-    margin-top:18px;
-  }
-  h1.title{
-    font-size:18px;
-    color:var(--yellow);
-    text-align:center;
-    letter-spacing:1px;
-    margin:0;
-  }
-  button#cta{
-    --size: clamp(72px, 10vw, 140px);
-    width:var(--size);
-    height:var(--size);
-    border-radius:50%;
-    border: 6px solid rgba(255,59,59,0.14);
-    background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.06), rgba(255,59,59,0.12) 28%, rgba(255,59,59,0.06) 60%, transparent 100%);
-    color:white;
-    font-weight:900;
-    font-size:18px;
-    cursor:pointer;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    box-shadow: 0 12px 50px rgba(255,0,0,0.08), inset 0 -6px 20px rgba(0,0,0,0.5);
-    transition: transform .12s ease, box-shadow .12s ease;
-    text-transform:lowercase;
-    letter-spacing:1px;
-    text-shadow:0 1px 2px rgba(0,0,0,0.6);
-  }
-  button#cta:hover{transform:translateY(-8px) scale(1.04)}
-  button#cta:active{transform:translateY(2px) scale(.98)}
-  /* pulse ring */
-  .pulse{
-    position:absolute;inset:auto;left:50%;transform:translateX(-50%);top:50%;
-    width:var(--size);height:var(--size);border-radius:50%;pointer-events:none;
-    box-shadow:0 0 0 8px rgba(255,59,59,0.06);
-    animation:ring 1.4s infinite;
-    z-index:1;
-  }
-  @keyframes ring{
-    0%{transform:translateX(-50%) scale(1);opacity:1}
-    70%{transform:translateX(-50%) scale(1.5);opacity:0}
-    100%{opacity:0}
-  }
-
-  /* overlay message */
-  .overlay{
-    position:fixed;inset:0;color:var(--yellow);display:flex;align-items:center;justify-content:center;z-index:20;
-    background:linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.85));
-    text-align:center;padding:20px;backdrop-filter: blur(2px);
-    opacity:0;pointer-events:none;transition:opacity .28s ease;
-  }
-  .overlay.show{opacity:1;pointer-events:auto}
-  .overlay .bubble{
-    max-width:92%;font-size:clamp(20px,5vw,56px);font-weight:900;line-height:1.02;
-    text-shadow: 0 10px 30px rgba(0,0,0,0.85);
-    transform:translateY(6px);
-    color:white;
-  }
-  .overlay .sub{font-size:16px;color:rgba(255,255,255,0.85);margin-top:12px;font-weight:600}
-
-  /* hidden image reveal */
-  .reveal-img{
-    position:fixed;left:50%;top:12%;transform:translateX(-50%);z-index:19;max-width:88%;max-height:60vh;
-    border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,0.6);display:none;opacity:0;transition:opacity .4s ease;
-  }
-  .reveal-img.show{display:block;opacity:1}
-
-  /* footer */
-  .foot{position:fixed;left:12px;bottom:12px;font-size:12px;color:rgba(124,252,0,0.25);z-index:3}
-
-  /* small responsive */
-  @media (max-width:600px){
-    .terminal{padding:12px}
-    .term-body{font-size:13px}
-    .stage{margin-top:8px}
-    button#cta{--size:72px;font-size:14px;border-width:4px}
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bromita Hacker</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: black;
+      color: #00ff41;
+      font-family: "Courier New", monospace;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1;
+    }
+    h1 {
+      font-size: 1.5rem;
+      text-align: center;
+      color: #0f0;
+      animation: glitch 1s infinite;
+    }
+    @keyframes glitch {
+      0% { text-shadow: 2px 2px #ff0000; }
+      20% { text-shadow: -2px -2px #00f; }
+      40% { text-shadow: 2px -2px #0f0; }
+      60% { text-shadow: -2px 2px #ff0; }
+      100% { text-shadow: 2px 2px #f0f; }
+    }
+    .terminal {
+      margin-top: 20px;
+      background: rgba(0,0,0,0.8);
+      padding: 20px;
+      border: 2px solid #0f0;
+      border-radius: 10px;
+      text-align: center;
+    }
+    input {
+      background: black;
+      border: none;
+      border-bottom: 2px solid #0f0;
+      color: #0f0;
+      font-size: 1.2rem;
+      text-align: center;
+      outline: none;
+      margin-top: 10px;
+    }
+    #message {
+      margin-top: 30px;
+      font-size: 2rem;
+      color: #fff;
+      display: none;
+    }
+    .access-denied {
+      color: red;
+      font-size: 1.5rem;
+      margin-top: 15px;
+      display: none;
+    }
+  </style>
 </head>
 <body>
-<canvas id="matrix"></canvas>
-<canvas id="confetti"></canvas>
+  <canvas id="matrix"></canvas>
+  <h1>Tu última acción antes de desaparecer, pista... 4 letras</h1>
 
-<img id="revealImage" class="reveal-img" alt="sorpresa" />
-
-<div class="terminal" role="region" aria-label="terminal emulator">
-  <div class="term-head">
-    <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-    <div style="flex:1"></div>
-    <div class="muted">bromita@neo:~/<span id="status">idle</span></div>
-  </div>
-  <div class="term-body" id="term">Iniciando...</div>
-</div>
-
-<div class="stage" aria-hidden="false">
-  <h1 class="title" id="headline">PRESIÓNALO PARA VOLVER A COMENZAR</h1>
-
-  <div style="position:relative">
-    <button id="cta" aria-label="Presioname">presioname</button>
-    <div class="pulse" aria-hidden="true"></div>
+  <div class="terminal">
+    <label for="keyword">Ingresa la palabra:</label><br>
+    <input type="text" id="keyword" autocomplete="off">
+    <div class="access-denied" id="denied">ACCESS DENIED</div>
   </div>
 
-  <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
-    <button id="enable-sound" style="font-family:inherit;padding:6px 10px;border-radius:6px;border:none;background:transparent;color:var(--green);cursor:pointer">Activar sonido</button>
-    <button id="share-whatsapp" style="font-family:inherit;padding:6px 10px;border-radius:6px;border:none;background:transparent;color:var(--yellow);cursor:pointer">Compartir por WhatsApp</button>
-  </div>
-</div>
+  <div id="message">💋 SECRETO DESBLOQUEADO: "BESO" 💋</div>
 
-<div class="overlay" id="overlay" role="dialog" aria-live="assertive" aria-hidden="true">
-  <div>
-    <div class="bubble" id="bubble"></div>
-    <div class="sub" id="bubble-sub"></div>
-  </div>
-</div>
-
-<div class="foot">/* crafted chaos — press with caution */</div>
-
-<script>
-/* MATRIX RAIN */
-(function(){
-  const c = document.getElementById('matrix');
-  const ctx = c.getContext('2d');
-  let w,h,cols,yPos;
-  function resize(){w=c.width=innerWidth;h=c.height=innerHeight;cols=Math.floor(w/14);yPos=new Array(cols).fill(0)}
-  addEventListener('resize',resize);resize();
-  function loop(){
-    ctx.fillStyle='rgba(0,0,0,0.06)';
-    ctx.fillRect(0,0,w,h);
-    ctx.fillStyle='rgba(124,252,0,0.9)';
-    ctx.font='14px monospace';
-    for(let i=0;i<cols;i++){
-      const text = String.fromCharCode(33+Math.floor(Math.random()*94));
-      ctx.fillText(text, i*14, yPos[i]);
-      if(yPos[i] > 100 + Math.random()*900) yPos[i]=0;
-      else yPos[i] += 14 + Math.random()*8;
-    }
-    requestAnimationFrame(loop);
-  }
-  loop();
-})();
-
-/* CONFETTI */
-(function(){
-  const canvas = document.getElementById('confetti');
-  const ctx = canvas.getContext('2d');
-  let w,h,parts=[];
-  function resize(){w=canvas.width=innerWidth;h=canvas.height=innerHeight}
-  addEventListener('resize',resize);resize();
-  function spawn(n){
-    for(let i=0;i<n;i++){
-      parts.push({
-        x: Math.random()*w,
-        y: -20 - Math.random()*200,
-        vx: Math.random()*8-4,
-        vy: Math.random()*4+2,
-        s: Math.random()*10+6,
-        r: Math.random()*360,
-        c: ['#ff3b3b','#ffd700','#7CFC00','#00d4ff','#ff66aa'][Math.floor(Math.random()*5)]
-      });
-    }
-  }
-  function update(){
-    ctx.clearRect(0,0,w,h);
-    for(let p of parts){
-      p.x += p.vx; p.y += p.vy; p.vy += 0.08; p.r += 8;
-      ctx.save();
-      ctx.translate(p.x,p.y);
-      ctx.rotate(p.r*Math.PI/180);
-      ctx.fillStyle=p.c;
-      ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s);
-      ctx.restore();
-    }
-    parts = parts.filter(p => p.y < h+80);
-    requestAnimationFrame(update);
-  }
-  update();
-  window._confetti = {spawn};
-})();
-
-/* Terminal typing with playful messages and fake countdown */
-(function(){
-  const el = document.getElementById('term');
-  const status = document.getElementById('status');
-  const lines = [
-    "Inicializando protocolo secreto...",
-    "Cargando recuerdos al 27%...",
-    "Contactando servidores de nostalgia...",
-    "Autenticando usuario... OK",
-    "Interfaz lista."
-  ];
-  let i=0;
-  function typeLine(txt, cb){
-    let j=0;
-    el.textContent += '\n';
-    const t = setInterval(()=>{
-      el.textContent += txt.charAt(j);
-      j++;
-      if(j>=txt.length){ clearInterval(t); cb(); }
-    }, 18 + Math.random()*35);
-  }
-  function run(){
-    if(i<lines.length){
-      typeLine(lines[i++], ()=>{ status.textContent = 'working'; setTimeout(run, 500 + Math.random()*600); });
-    } else {
-      setTimeout(()=>{ status.textContent='ready'; el.textContent += '\n\n> Este sistema es una broma muy seria. Presiona el botón.'; }, 350);
-    }
-  }
-  el.textContent = "";
-  setTimeout(run, 420);
-})();
-
-/* Audio system: initialize on user gesture */
-let audioEnabled = false;
-let audioCtx = null;
-function initAudio(){
-  try{
-    const A = (window.AudioContext||window.webkitAudioContext);
-    audioCtx = new A();
-    audioEnabled = true;
-  }catch(e){ audioEnabled = false; }
-}
-function playTune(){
-  if(!audioEnabled) return;
-  try{
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    o.type='sine'; o.frequency.value = 720;
-    g.gain.value = 0.02;
-    o.connect(g); g.connect(audioCtx.destination);
-    o.start();
-    const now = audioCtx.currentTime;
-    o.frequency.setValueAtTime(720, now);
-    o.frequency.exponentialRampToValueAtTime(320, now + 0.25);
-    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
-    setTimeout(()=>{ o.stop(); }, 500);
-  }catch(e){}
-}
-
-/* typewriter overlay */
-function typeOverlay(text, speed=36, cb){
-  const over = document.getElementById('overlay');
-  const b = document.getElementById('bubble');
-  const sub = document.getElementById('bubble-sub');
-  b.textContent = '';
-  sub.textContent = '';
-  over.classList.add('show');
-  let k=0;
-  const t = setInterval(()=>{
-    b.textContent += text.charAt(k);
-    k++;
-    if(k>=text.length){ clearInterval(t); if(cb) cb(); }
-  }, speed);
-}
-
-/* reveal image if ?img=... parameter is provided */
-function revealImageFromQuery(){
-  const params = new URLSearchParams(location.search);
-  if(params.has('img')){
-    const url = params.get('img');
-    const img = document.getElementById('revealImage');
-    img.src = url;
-    img.onload = ()=> { img.classList.add('show'); };
-    img.onerror = ()=> { console.log('Imagen no válida'); };
-  }
-}
-revealImageFromQuery();
-
-/* CTA behavior: dramatic fake countdown + reveal */
-(function(){
-  const cta = document.getElementById('cta');
-  const overlay = document.getElementById('overlay');
-  const bubble = document.getElementById('bubble');
-  const headline = document.getElementById('headline');
-  const enableSound = document.getElementById('enable-sound');
-  const shareBtn = document.getElementById('share-whatsapp');
-
-  enableSound.addEventListener('click', ()=>{
-    initAudio();
-    if(audioEnabled){ playTune(); enableSound.innerText = 'Audio activado'; enableSound.style.color='var(--yellow)'; }
-    else { enableSound.innerText = 'Audio no disponible'; }
-  });
-
-  shareBtn.addEventListener('click', ()=>{
-    const msg = encodeURIComponent('Mira esto : ' + location.href);
-    window.open('https://api.whatsapp.com/send?text=' + msg, '_blank');
-  });
-
-  cta.addEventListener('click', async ()=>{
-    // tiny misdirection: fake "secure wipe" countdown that ends in reveal
-    cta.disabled = true;
-    headline.textContent = 'INICIANDO SECUENCIA...';
-    let countdown = 5;
-    const originalText = cta.textContent;
-    const fake = document.getElementById('term');
-    fake.textContent += '\n\n> Ejecutando secuencia de reinicio...';
-    const timer = setInterval(()=>{
-      fake.textContent += '\n> ' + countdown + '...';
-      countdown--;
-      if(countdown < 0){
-        clearInterval(timer);
-        // explosion of confetti & message
-        window._confetti.spawn(60);
-        playTune();
-        // if there's an image, show it bigger
-        const img = document.getElementById('revealImage');
-        if(img.src){ img.classList.add('show'); }
-        typeOverlay("A PROPÓSITO...\n¿QUÉ SE SUPONE QUE VAMOS A COMENZAR? JAJAJAJAJA ", 28, ()=>{
-          // after show, small follow up
-          document.getElementById('bubble-sub').textContent = "Doble clic en el botón para algo más dulce.";
-          cta.disabled = false;
-          headline.textContent = 'PRESIÓNALO PARA VOLVER A COMENZAR';
-        });
+  <script>
+    // Fondo estilo Matrix
+    const canvas = document.getElementById("matrix");
+    const ctx = canvas.getContext("2d");
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    const chars = "アァイィウヴエェオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモヤユヨラリルレロワン".split("");
+    const font_size = 14;
+    const columns = canvas.width / font_size;
+    const drops = [];
+    for (let x = 0; x < columns; x++) drops[x] = 1;
+    function draw() {
+      ctx.fillStyle = "rgba(0,0,0,0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#0f0";
+      ctx.font = font_size + "px arial";
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * font_size, drops[i] * font_size);
+        if (drops[i] * font_size > canvas.height && Math.random() > 0.975)
+          drops[i] = 0;
+        drops[i]++;
       }
-    }, 700);
-    // small bounce
-    cta.style.transform = 'scale(0.94) rotate(-2deg)';
-    setTimeout(()=> cta.style.transform = '', 140);
-  });
+    }
+    setInterval(draw, 35);
 
-  cta.addEventListener('dblclick', ()=>{
-    window._confetti.spawn(80);
-    playTune();
-    typeOverlay("JAJA, YA VOLVIMOS A COMENZAR...\nESPERO Y SEA DIVERTIDO, COMO ANTES DE LA ULTIMA VEZ... ", 26, ()=>{
-      document.getElementById('bubble-sub').textContent = "Si quieres, puedes agregar ?img=URL_EN_LINEA para mostrar una sorpresa.";
+    // Validación palabra clave
+    const input = document.getElementById("keyword");
+    const message = document.getElementById("message");
+    const denied = document.getElementById("denied");
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        let val = input.value.trim().toUpperCase();
+        if (val === "BESO") {
+          denied.style.display = "none";
+          message.style.display = "block";
+          message.style.animation = "glitch 0.5s infinite";
+          // confetti básico
+          for (let i = 0; i < 100; i++) {
+            setTimeout(() => {
+              const conf = document.createElement("div");
+              conf.innerHTML = "💚";
+              conf.style.position = "fixed";
+              conf.style.left = Math.random() * 100 + "vw";
+              conf.style.top = "-5vh";
+              conf.style.fontSize = "24px";
+              conf.style.animation = "fall 3s linear forwards";
+              document.body.appendChild(conf);
+              setTimeout(() => conf.remove(), 3000);
+            }, i * 50);
+          }
+        } else {
+          denied.style.display = "block";
+          message.style.display = "none";
+        }
+      }
     });
-  });
 
-  // close overlay on click anywhere
-  overlay.addEventListener('click', ()=>{
-    overlay.classList.remove('show');
-    document.getElementById('bubble').textContent = '';
-    document.getElementById('bubble-sub').textContent = '';
-  });
-
-})();
-
-/* console easter egg */
-console.log("%cHey hacker, abriste la consola. Si quieres un mensaje secreto, escribe: revealSecret('tu apodo')", "color:#0ff;font-weight:bold;");
-window.revealSecret = function(name){
-  console.log("%cSecreto desbloqueado: " + name + " recibe un saludo. ", "color:#ff66aa;font-weight:bold;");
-  // show a soft overlay when called
-  const txt = "Hola " + name + ", alguien te está pensando ahora mismo. ";
-  const over = document.getElementById('overlay');
-  over.classList.add('show');
-  document.getElementById('bubble').textContent = txt;
-}
-
-/* friendly note */
-console.log("%cTip: puedes compartir este enlace con ?img=https://link-a-una-foto.jpg para que se muestre una imagen sorpresa cuando abran.", "color:#7CFC00");
-
-</script>
+    // Animación confetti
+    const style = document.createElement("style");
+    style.innerHTML = `
+      @keyframes fall {
+        to { transform: translateY(110vh) rotate(360deg); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
 </body>
 </html>
