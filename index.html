@@ -1,170 +1,188 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bromita Hacker</title>
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      background: black;
-      color: #00ff41;
-      font-family: "Courier New", monospace;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-    }
-    canvas {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: -1;
-    }
-    h1 {
-      font-size: 1.5rem;
-      text-align: center;
-      color: #0f0;
-      animation: glitch 1s infinite;
-    }
-    @keyframes glitch {
-      0% { text-shadow: 2px 2px #ff0000; }
-      20% { text-shadow: -2px -2px #00f; }
-      40% { text-shadow: 2px -2px #0f0; }
-      60% { text-shadow: -2px 2px #ff0; }
-      100% { text-shadow: 2px 2px #f0f; }
-    }
-    .terminal {
-      margin-top: 20px;
-      background: rgba(0,0,0,0.8);
-      padding: 20px;
-      border: 2px solid #0f0;
-      border-radius: 10px;
-      text-align: center;
-    }
-    input {
-      background: black;
-      border: none;
-      border-bottom: 2px solid #0f0;
-      color: #0f0;
-      font-size: 1.2rem;
-      text-align: center;
-      outline: none;
-      margin-top: 10px;
-    }
-    button {
-      margin-top: 10px;
-      padding: 8px 20px;
-      font-size: 1rem;
-      cursor: pointer;
-      background: black;
-      color: #0f0;
-      border: 2px solid #0f0;
-      border-radius: 5px;
-    }
-    #message {
-      margin-top: 30px;
-      font-size: 2rem;
-      color: #fff;
-      display: none;
-    }
-    .access-denied {
-      color: red;
-      font-size: 1.5rem;
-      margin-top: 15px;
-      display: none;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Experiencia Interactiva</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    background: black;
+    color: #00ff41;
+    font-family: "Courier New", monospace;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+  canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: -1;
+  }
+  h1 {
+    font-size: 2rem;
+    text-align: center;
+    color: #0f0;
+    display: none;
+  }
+  .button-red {
+    padding: 20px 50px;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #fff;
+    background: red;
+    border: 3px solid #fff;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  .terminal {
+    margin-top: 20px;
+    background: rgba(0,0,0,0.8);
+    padding: 20px;
+    border: 2px solid #0f0;
+    border-radius: 10px;
+    text-align: center;
+    display: none;
+  }
+  input {
+    background: black;
+    border: none;
+    border-bottom: 2px solid #0f0;
+    color: #0f0;
+    font-size: 1.2rem;
+    text-align: center;
+    outline: none;
+    margin-top: 10px;
+  }
+  #message, #bonusMessage, #hint {
+    margin-top: 30px;
+    font-size: 1.5rem;
+    color: #fff;
+    display: none;
+    text-align: center;
+    max-width: 80%;
+    white-space: pre-wrap;
+  }
+  .access-denied {
+    color: red;
+    font-size: 1.2rem;
+    margin-top: 15px;
+    display: none;
+  }
+</style>
 </head>
 <body>
-  <canvas id="matrix"></canvas>
-  <h1>Tu última acción antes de desaparecer, pista... 4 letras</h1>
 
-  <div class="terminal">
-    <label for="keyword">Ingresa la palabra:</label><br>
-    <input type="text" id="keyword" autocomplete="off">
-    <button id="revealBtn">Revelar</button>
-    <div class="access-denied" id="denied">ACCESS DENIED</div>
-  </div>
+<canvas id="matrix"></canvas>
 
-  <div id="message">💋 SECRETO DESBLOQUEADO: "BESO" 💋</div>
+<h1 id="startTitle">PRESIONA PARA VOLVER A COMENZAR</h1>
+<button id="startBtn" class="button-red">START</button>
 
-  <script>
-    // Fondo estilo Matrix
-    const canvas = document.getElementById("matrix");
-    const ctx = canvas.getContext("2d");
-    canvas.height = window.innerHeight;
+<h1 id="step1Message">APROPOSITO, QUE VAMOS A VOLVER A COMENZAR? JAJAJAJA</h1>
+
+<div class="terminal" id="bonusTerminal">
+  <div id="bonusInstruction">Para revelar un mensaje oculto ingrese la palabra clave:</div>
+  <input type="text" id="keyword" autocomplete="off">
+  <div class="access-denied" id="denied">ACCESS DENIED</div>
+  <div id="hint"></div>
+</div>
+
+<div id="bonusMessage"></div>
+
+<script>
+  // Fondo Matrix
+  const canvas = document.getElementById("matrix");
+  const ctx = canvas.getContext("2d");
+  canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth;
+  const chars = "アァイィウヴエェオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモヤユヨラリルレロワン".split("");
+  const font_size = 14;
+  const columns = canvas.width / font_size;
+  const drops = [];
+  for (let x = 0; x < columns; x++) drops[x] = 1;
+  function draw() {
+    ctx.fillStyle = "rgba(0,0,0,0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#0f0";
+    ctx.font = font_size + "px arial";
+    for (let i = 0; i < drops.length; i++) {
+      const text = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(text, i * font_size, drops[i] * font_size);
+      if (drops[i] * font_size > canvas.height && Math.random() > 0.975)
+        drops[i] = 0;
+      drops[i]++;
+    }
+  }
+  setInterval(draw, 35);
+  window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
-    const chars = "アァイィウヴエェオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモヤユヨラリルレロワン".split("");
-    const font_size = 14;
-    const columns = canvas.width / font_size;
-    const drops = [];
-    for (let x = 0; x < columns; x++) drops[x] = 1;
-    function draw() {
-      ctx.fillStyle = "rgba(0,0,0,0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#0f0";
-      ctx.font = font_size + "px arial";
-      for (let i = 0; i < drops.length; i++) {
-        const text = chars[Math.floor(Math.random() * chars.length)];
-        ctx.fillText(text, i * font_size, drops[i] * font_size);
-        if (drops[i] * font_size > canvas.height && Math.random() > 0.975)
-          drops[i] = 0;
-        drops[i]++;
-      }
+    canvas.height = window.innerHeight;
+  });
+
+  // Flujo interactivo
+  const startBtn = document.getElementById("startBtn");
+  const startTitle = document.getElementById("startTitle");
+  const step1Message = document.getElementById("step1Message");
+  const bonusTerminal = document.getElementById("bonusTerminal");
+  const bonusMessage = document.getElementById("bonusMessage");
+  const input = document.getElementById("keyword");
+  const denied = document.getElementById("denied");
+  const hint = document.getElementById("hint");
+
+  startBtn.style.display = "block";
+  startTitle.style.display = "block";
+
+  startBtn.addEventListener("click", () => {
+    startBtn.style.display = "none";
+    startTitle.style.display = "none";
+    step1Message.style.display = "block";
+    setTimeout(() => {
+      step1Message.style.display = "none";
+      bonusTerminal.style.display = "block";
+    }, 2000);
+  });
+
+  function typeWriter(text, element, speed = 50) {
+    element.textContent = "";
+    let i = 0;
+    const interval = setInterval(() => {
+      element.textContent += text.charAt(i);
+      i++;
+      if (i >= text.length) clearInterval(interval);
+    }, speed);
+  }
+
+  function checkWord() {
+    let val = input.value.trim().toUpperCase();
+    if (val === "UN BESO") {
+      denied.style.display = "none";
+      hint.style.display = "none";
+      bonusTerminal.style.display = "none";
+
+      const finalMessage = `Apareces después de años y la advertencia interna sigue sonando: ¡peligro!.
+Pero sabes, lo raro no es que estemos hablando otra vez....lo raro es que siga sintiendo que contigo todo puede volverse un lío divertido.
+Ahora dime, ¿seguimos siendo peligrosos o nos comportamos?`;
+
+      bonusMessage.style.display = "block";
+      typeWriter(finalMessage, bonusMessage, 35);
+    } else {
+      denied.style.display = "block";
+      hint.textContent = "Pista: lo último que me diste antes de desaparecer";
+      hint.style.display = "block";
     }
-    setInterval(draw, 35);
+  }
 
-    // Validación palabra clave
-    const input = document.getElementById("keyword");
-    const message = document.getElementById("message");
-    const denied = document.getElementById("denied");
-    const btn = document.getElementById("revealBtn");
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") checkWord();
+  });
 
-    function checkWord() {
-      let val = input.value.trim().toUpperCase();
-      if (val === "BESO") {
-        denied.style.display = "none";
-        message.style.display = "block";
-        message.style.animation = "glitch 0.5s infinite";
-        // confetti básico
-        for (let i = 0; i < 100; i++) {
-          setTimeout(() => {
-            const conf = document.createElement("div");
-            conf.innerHTML = "💚";
-            conf.style.position = "fixed";
-            conf.style.left = Math.random() * 100 + "vw";
-            conf.style.top = "-5vh";
-            conf.style.fontSize = "24px";
-            conf.style.animation = "fall 3s linear forwards";
-            document.body.appendChild(conf);
-            setTimeout(() => conf.remove(), 3000);
-          }, i * 50);
-        }
-      } else {
-        denied.style.display = "block";
-        message.style.display = "none";
-      }
-    }
+</script>
 
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") checkWord();
-    });
-
-    btn.addEventListener("click", checkWord);
-
-    // Animación confetti
-    const style = document.createElement("style");
-    style.innerHTML = `@keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }`;
-    document.head.appendChild(style);
-
-    window.addEventListener('resize', () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    });
-  </script>
 </body>
 </html>
 
