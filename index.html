@@ -8,8 +8,8 @@
   body {
     margin: 0;
     height: 100vh;
-    background: black;
-    color: #00ff41;
+    background: #0D0B1D; /* Fondo oscuro */
+    color: #8A2BE2;       /* Texto morado */
     font-family: "Courier New", monospace;
     display: flex;
     flex-direction: column;
@@ -26,53 +26,67 @@
   h1 {
     font-size: 2rem;
     text-align: center;
-    color: #0f0;
+    color: #8A2BE2;
+    text-shadow: 0 0 10px #4B9CD3;
     display: none;
   }
-  .button-red {
+  .button-purple {
     padding: 20px 50px;
     font-size: 2rem;
     font-weight: bold;
     color: #fff;
-    background: red;
-    border: 3px solid #fff;
+    background: #6A5ACD; /* azul-morado */
+    border: 3px solid #4B9CD3;
     border-radius: 10px;
     cursor: pointer;
     margin-top: 20px;
+    transition: 0.3s;
+  }
+  .button-purple:hover {
+    background: #7B68EE;
+    transform: scale(1.05);
   }
   .terminal {
     margin-top: 20px;
-    background: rgba(0,0,0,0.8);
+    background: rgba(13,11,29,0.85);
     padding: 20px;
-    border: 2px solid #0f0;
+    border: 2px solid #4B9CD3;
     border-radius: 10px;
     text-align: center;
     display: none;
   }
   input {
-    background: black;
+    background: #0D0B1D;
     border: none;
-    border-bottom: 2px solid #0f0;
-    color: #0f0;
+    border-bottom: 2px solid #4B9CD3;
+    color: #4B9CD3;
     font-size: 1.2rem;
     text-align: center;
     outline: none;
     margin-top: 10px;
   }
-  #message, #bonusMessage, #hint {
+  #bonusMessage {
     margin-top: 30px;
     font-size: 1.5rem;
-    color: #fff;
+    color: #8A2BE2;
     display: none;
     text-align: center;
     max-width: 80%;
     white-space: pre-wrap;
+    text-shadow: 0 0 5px #4B9CD3;
   }
   .access-denied {
     color: red;
     font-size: 1.2rem;
     margin-top: 15px;
     display: none;
+  }
+  .blink {
+    animation: blink 1s infinite;
+  }
+  @keyframes blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0.3; }
   }
 </style>
 </head>
@@ -81,7 +95,7 @@
 <canvas id="matrix"></canvas>
 
 <h1 id="startTitle">PRESIONA PARA VOLVER A COMENZAR</h1>
-<button id="startBtn" class="button-red">START</button>
+<button id="startBtn" class="button-purple">START</button>
 
 <h1 id="step1Message">APROPOSITO, QUE VAMOS A VOLVER A COMENZAR? JAJAJAJA</h1>
 
@@ -107,10 +121,9 @@
   const drops = Array(columns).fill(1);
 
   function drawMatrix() {
-    ctx.fillStyle = "rgba(0,0,0,0.05)";
+    ctx.fillStyle = "rgba(13,11,29,0.05)";
     ctx.fillRect(0, 0, width, height);
-
-    ctx.fillStyle = "#0f0";
+    ctx.fillStyle = "#4B9CD3";
     ctx.font = font_size + "px monospace";
 
     for (let i = 0; i < drops.length; i++) {
@@ -119,7 +132,6 @@
       if (drops[i] * font_size > height && Math.random() > 0.975) drops[i] = 0;
       drops[i]++;
     }
-
     requestAnimationFrame(drawMatrix);
   }
   drawMatrix();
@@ -153,14 +165,30 @@
     }, 2000);
   });
 
-  function typeWriter(text, element, speed = 50) {
+  function typeWriter(text, element) {
     element.textContent = "";
     let i = 0;
-    const interval = setInterval(() => {
-      element.textContent += text.charAt(i);
-      i++;
-      if (i >= text.length) clearInterval(interval);
-    }, speed);
+    function escribir() {
+      if (i < text.length) {
+        const char = text.charAt(i);
+        // efecto parpadeo en palabras clave
+        if (text.substring(i, i + 10) === "desaparec") {
+          element.innerHTML += '<span class="blink">' + char + '</span>';
+        } else if (text.substring(i, i + 5) === "pelig") {
+          element.innerHTML += '<span class="blink">' + char + '</span>';
+        } else {
+          element.innerHTML += char;
+        }
+        i++;
+        let delay = 50 + Math.random() * 150;
+        if (char === ',' || char === '.') delay += 400;
+        if (char === ' ') delay += 50;
+        if (text.substring(i-1, i+8) === "desaparec") delay += 300;
+        if (text.substring(i-1, i+5) === "pelig") delay += 300;
+        setTimeout(escribir, delay);
+      }
+    }
+    escribir();
   }
 
   function checkWord() {
@@ -170,12 +198,10 @@
       hint.style.display = "none";
       bonusTerminal.style.display = "none";
 
-      const finalMessage = `Apareces después de años y la advertencia interna sigue sonando: ¡peligro!.
-Pero sabes, lo raro no es que estemos hablando otra vez....lo raro es que siga sintiendo que contigo todo puede volverse un lío divertido.
-Ahora dime, ¿seguimos siendo peligrosos o nos comportamos?`;
+      const finalMessage = `Apareces después de años y la advertencia interna sigue sonando: ¡peligro!.\nPero sabes, lo raro no es que estemos hablando otra vez....lo raro es que siga sintiendo que contigo todo puede volverse un lío divertido.\nAhora dime, ¿seguimos siendo peligrosos o nos comportamos?`;
 
       bonusMessage.style.display = "block";
-      typeWriter(finalMessage, bonusMessage, 35);
+      typeWriter(finalMessage, bonusMessage);
     } else {
       denied.style.display = "block";
       hint.textContent = "Pista: lo último que me diste antes de desaparecer";
