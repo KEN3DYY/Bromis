@@ -2,126 +2,86 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Bromita Interactiva</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hack The Matrix</title>
   <style>
     body {
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: black;
-      color: limegreen;
+      background-color: #000;
+      color: #00ff00;
       font-family: "Courier New", monospace;
-      overflow: hidden;
-    }
-
-    #console {
-      font-size: 1.2rem;
-      white-space: pre-line;
-    }
-
-    #mainContent {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
+      padding: 20px;
       text-align: center;
-      color: white;
-      font-family: "Comic Sans MS", sans-serif;
     }
 
     h1 {
-      font-size: 2rem;
-      margin-bottom: 2rem;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px #00ff00;
     }
 
-    #bigButton {
-      padding: 2rem 4rem;
-      font-size: 2rem;
+    .terminal {
+      background: rgba(0, 0, 0, 0.8);
+      border: 1px solid #00ff00;
+      padding: 15px;
+      width: 80%;
+      margin: auto;
+      height: 200px;
+      overflow-y: auto;
+      text-align: left;
+      box-shadow: 0 0 15px #00ff00;
+    }
+
+    .line {
+      display: block;
+      animation: typing 2s steps(40, end);
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 2px solid #00ff00;
+    }
+
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    button {
+      margin-top: 30px;
+      padding: 15px 30px;
+      font-size: 20px;
       font-weight: bold;
-      color: white;
-      background-color: red;
-      border: none;
-      border-radius: 20px;
+      border: 2px solid #00ff00;
+      background: black;
+      color: #00ff00;
       cursor: pointer;
-      animation: pulse 1.5s infinite;
-      box-shadow: 0 0 20px rgba(255,0,0,0.6);
+      box-shadow: 0 0 15px #00ff00;
+      transition: all 0.2s ease-in-out;
     }
 
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-      100% { transform: scale(1); }
-    }
-
-    #message {
-      display: none;
-      font-size: 3rem;
-      font-weight: bold;
-      color: yellow;
-      text-shadow: 3px 3px 8px black;
-      margin-top: 3rem;
-      white-space: pre-line;
+    button:hover {
+      background: #00ff00;
+      color: black;
+      box-shadow: 0 0 25px #00ff00;
     }
   </style>
 </head>
 <body>
-  <div id="console"></div>
+  <h1>💻 Accediendo al sistema...</h1>
 
-  <div id="mainContent">
-    <h1>PRESIÓNALO PARA VOLVER A COMENZAR</h1>
-    <button id="bigButton">¡GRAN BOTÓN ROJO!</button>
-    <div id="message"></div>
+  <div class="terminal" id="terminal">
+    <span class="line">[OK] Cargando sistema...</span><br>
+    <span class="line">[OK] Iniciando protocolo secreto...</span><br>
+    <span class="line">[OK] Preparando sorpresa... </span>
   </div>
 
+  <button onclick="showMessage()">Presióname</button>
+
   <script>
-    const consoleDiv = document.getElementById("console");
-    const mainContent = document.getElementById("mainContent");
-    const button = document.getElementById("bigButton");
-    const message = document.getElementById("message");
-
-    // Texto inicial estilo hacker
-    const introLines = [
-      "Iniciando protocolo de reinicio...",
-      "Verificando sistema...",
-      "Autenticando usuario...",
-      "Cargando interfaz principal..."
-    ];
-
-    let i = 0;
-    function typeConsole() {
-      if (i < introLines.length) {
-        consoleDiv.innerHTML += introLines[i] + "\n";
-        i++;
-        setTimeout(typeConsole, 1500);
-      } else {
-        setTimeout(() => {
-          consoleDiv.style.display = "none";
-          mainContent.style.display = "flex";
-        }, 1000);
-      }
+    function showMessage() {
+      const terminal = document.getElementById("terminal");
+      terminal.innerHTML += "<br><span class='line'>⚠️ ALERTA: Has activado el modo ULTRA SECRETO 🔥</span>";
+      terminal.innerHTML += "<br><span class='line'>Bienvenido al lado oscuro... 😈</span>";
+      terminal.scrollTop = terminal.scrollHeight;
     }
-    typeConsole();
-
-    // Evento del botón rojo
-    button.addEventListener("click", () => {
-      const text = "A PROPÓSITO...\n¿QUÉ SE SUPONE QUE VAMOS A COMENZAR? JAJAJAJAJA";
-      message.innerHTML = "";
-      message.style.display = "block";
-
-      let j = 0;
-      const typer = setInterval(() => {
-        if (j < text.length) {
-          message.innerHTML += text.charAt(j);
-          j++;
-        } else {
-          clearInterval(typer);
-        }
-      }, 70);
-    });
   </script>
 </body>
 </html>
