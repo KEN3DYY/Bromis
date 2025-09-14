@@ -3,138 +3,352 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Experiencia Interactiva</title>
+<title>Experiencia Gamer Interactiva</title>
 <style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
   body {
     margin: 0;
     height: 100vh;
-    background: black;
-    font-family: "Courier New", monospace;
+    background: linear-gradient(135deg, #0a0a1a, #000000);
+    font-family: 'Courier New', monospace;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    color: #ffffff;
   }
-  canvas {
+  
+  .gamer-bg {
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index: -1;
+    background: 
+      radial-gradient(circle at 20% 30%, rgba(41, 12, 85, 0.7) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(0, 0, 139, 0.7) 0%, transparent 40%);
+    overflow: hidden;
   }
-  h1 {
-    font-size: 2rem;
+  
+  .grid-lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 30px 30px;
+    animation: gridMove 20s linear infinite;
+  }
+  
+  .particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .particle {
+    position: absolute;
+    background: rgba(0, 255, 255, 0.5);
+    border-radius: 50%;
+    animation: float 15s infinite linear;
+  }
+  
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    display: none;
+    z-index: 1;
+    width: 90%;
+    max-width: 800px;
   }
+  
+  .start-message {
+    font-size: 2.8rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+    animation: pulse 2s infinite;
+    color: #ffffff;
+    font-weight: bold;
+    letter-spacing: 2px;
+  }
+  
   .button-red {
-    padding: 20px 50px;
-    font-size: 2rem;
+    padding: 20px 60px;
+    font-size: 2.2rem;
     font-weight: bold;
     color: #fff;
-    background: #6a0dad; /* morado */
-    border: 3px solid #00f; /* azul */
-    border-radius: 10px;
+    background: linear-gradient(145deg, #ff0080, #8000ff);
+    border: none;
+    border-radius: 12px;
     cursor: pointer;
     margin-top: 20px;
+    box-shadow: 0 0 20px rgba(255, 0, 128, 0.7);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    position: relative;
+    overflow: hidden;
   }
+  
+  .button-red::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: linear-gradient(45deg, #ff0080, #8000ff, #00ffff, #ff0080);
+    background-size: 400%;
+    z-index: -1;
+    border-radius: 16px;
+    animation: glowing 20s linear infinite;
+    filter: blur(15px);
+    opacity: 0.7;
+  }
+  
+  .button-red:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(255, 0, 128, 0.9);
+  }
+  
+  .button-red:active {
+    transform: scale(0.98);
+  }
+  
   .terminal {
-    margin-top: 20px;
-    background: rgba(0,0,0,0.85);
-    padding: 20px;
-    border: 2px solid #8a2be2; /* azul/morado */
-    border-radius: 10px;
+    margin-top: 30px;
+    background: rgba(10, 10, 40, 0.9);
+    padding: 25px;
+    border: 2px solid #00ffff;
+    border-radius: 12px;
     text-align: center;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
     display: none;
+    backdrop-filter: blur(10px);
   }
+  
   input {
-    background: black;
-    border: none;
-    border-bottom: 2px solid #7b68ee; /* morado claro */
-    color: #7b68ee;
-    font-size: 1.2rem;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #8000ff;
+    color: #ffffff;
+    font-size: 1.3rem;
     text-align: center;
     outline: none;
-    margin-top: 10px;
+    margin-top: 20px;
+    padding: 12px;
+    width: 80%;
+    transition: all 0.3s;
+    border-radius: 8px;
+    font-weight: bold;
   }
-  #message, #bonusMessage, #hint {
+  
+  input:focus {
+    border: 2px solid #00ffff;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.8);
+  }
+  
+  #bonusMessage {
     margin-top: 30px;
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     color: #fff;
-    display: none;
     text-align: center;
     max-width: 80%;
     white-space: pre-wrap;
-  }
-  .access-denied {
-    color: #ff4500;
-    font-size: 1.2rem;
-    margin-top: 15px;
+    line-height: 1.6;
     display: none;
+    background: rgba(10, 10, 40, 0.9);
+    padding: 25px;
+    border-radius: 12px;
+    border: 2px solid #ff0080;
+    box-shadow: 0 0 30px rgba(255, 0, 128, 0.4);
+    backdrop-filter: blur(10px);
+  }
+  
+  .access-denied {
+    color: #ff0000;
+    font-size: 1.4rem;
+    margin-top: 15px;
+    text-shadow: 0 0 8px rgba(255, 0, 0, 0.7);
+    display: none;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+  
+  #hint {
+    margin-top: 15px;
+    font-size: 1.3rem;
+    color: #00ffff;
+    display: none;
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.7);
+  }
+  
+  .message {
+    font-size: 2.2rem;
+    text-align: center;
+    margin: 20px 0;
+    display: none;
+    text-shadow: 0 0 10px #ff0080, 0 0 20px #ff0080;
+    padding: 25px;
+    border: 2px solid #8000ff;
+    border-radius: 12px;
+    background: rgba(10, 10, 40, 0.9);
+    max-width: 90%;
+    color: #ffffff;
+    font-weight: bold;
+    letter-spacing: 1px;
+    backdrop-filter: blur(10px);
+  }
+  
+  .instruction {
+    font-size: 1.7rem;
+    color: #00ffff;
+    margin-bottom: 15px;
+    text-shadow: 0 0 8px #00ffff;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+  
+  @keyframes pulse {
+    0% { text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff; }
+    50% { text-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff; }
+    100% { text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff; }
+  }
+  
+  @keyframes glowing {
+    0% { background-position: 0 0; }
+    50% { background-position: 400% 0; }
+    100% { background-position: 0 0; }
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes typewriter {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+  
+  @keyframes gridMove {
+    0% { transform: translateY(0) translateX(0); }
+    100% { transform: translateY(-30px) translateX(-30px); }
+  }
+  
+  @keyframes float {
+    0% { transform: translateY(0) translateX(0) rotate(0deg); }
+    25% { transform: translateY(-20vh) translateX(10vw) rotate(90deg); }
+    50% { transform: translateY(10vh) translateX(20vw) rotate(180deg); }
+    75% { transform: translateY(20vh) translateX(-10vw) rotate(270deg); }
+    100% { transform: translateY(0) translateX(0) rotate(360deg); }
+  }
+  
+  .fade-in {
+    animation: fadeIn 1s forwards;
+  }
+  
+  .typewriter {
+    overflow: hidden;
+    white-space: nowrap;
+    animation: typewriter 3s steps(40) forwards;
+  }
+  
+  @media (max-width: 768px) {
+    .start-message {
+      font-size: 2rem;
+    }
+    
+    .button-red {
+      font-size: 1.7rem;
+      padding: 15px 40px;
+    }
+    
+    .message {
+      font-size: 1.7rem;
+    }
+    
+    .instruction {
+      font-size: 1.3rem;
+    }
+    
+    input {
+      font-size: 1.1rem;
+      width: 90%;
+    }
+    
+    #bonusMessage {
+      font-size: 1.3rem;
+    }
   }
 </style>
 </head>
 <body>
 
-<canvas id="matrix"></canvas>
-
-<h1 id="startTitle">PRESIONA PARA VOLVER A COMENZAR</h1>
-<button id="startBtn" class="button-red">START</button>
-
-<h1 id="step1Message">APROPOSITO, QUE VAMOS A VOLVER A COMENZAR? JAJAJAJA</h1>
-
-<div class="terminal" id="bonusTerminal">
-  <div id="bonusInstruction">Para revelar un mensaje oculto ingrese la palabra clave:</div>
-  <input type="text" id="keyword" autocomplete="off">
-  <div class="access-denied" id="denied">ACCESS DENIED</div>
-  <div id="hint"></div>
+<div class="gamer-bg">
+  <div class="grid-lines"></div>
+  <div class="particles" id="particles"></div>
 </div>
 
-<div id="bonusMessage"></div>
+<div class="container">
+  <div class="start-message">PRESIONE AQUÍ PARA COMENZAR</div>
+  <button id="startBtn" class="button-red">START</button>
+
+  <div class="message" id="step1Message">APROPOSITO, ¿QUE VAMOS A VOLVER A COMENZAR? JAJAJAJA</div>
+
+  <div class="terminal" id="bonusTerminal">
+    <div class="instruction">PARA EL MENSAJE OCULTO INGRESE LA CLAVE</div>
+    <input type="text" id="keyword" autocomplete="off" placeholder="Escribe aquí...">
+    <div class="access-denied" id="denied">ACCESS DENIED</div>
+    <div id="hint"></div>
+  </div>
+
+  <div id="bonusMessage"></div>
+</div>
 
 <script>
-  // Fondo Matrix con binario y paleta azul/morado
-  const canvas = document.getElementById("matrix");
-  const ctx = canvas.getContext("2d");
-  canvas.height = window.innerHeight;
-  canvas.width = window.innerWidth;
-
-  const chars = "01".split(""); // Binario
-  const font_size = 16;
-  const columns = Math.floor(canvas.width / font_size);
-  const drops = Array(columns).fill(1);
-
-  const colors = ["#00f", "#7b68ee", "#8a2be2", "#4b0082"]; // azul-morado
-
-  function draw() {
-    // Fondo menos opaco para que las letras sean más visibles
-    ctx.fillStyle = "rgba(0,0,0,0.1)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.font = font_size + "px monospace";
-
-    for (let i = 0; i < drops.length; i++) {
-      const text = chars[Math.floor(Math.random() * chars.length)];
-      ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
-      ctx.fillText(text, i * font_size, drops[i] * font_size);
-
-      if (drops[i] * font_size > canvas.height && Math.random() > 0.975)
-        drops[i] = 0;
-
-      drops[i]++;
-    }
+  // Crear partículas para el fondo gamer
+  const particlesContainer = document.getElementById('particles');
+  for (let i = 0; i < 50; i++) {
+    const particle = document.createElement('div');
+    particle.classList.add('particle');
+    
+    const size = Math.random() * 10 + 2;
+    particle.style.width = `${size}px`;
+    particle.style.height = `${size}px`;
+    
+    particle.style.left = `${Math.random() * 100}vw`;
+    particle.style.top = `${Math.random() * 100}vh`;
+    
+    particle.style.animationDuration = `${Math.random() * 20 + 10}s`;
+    particle.style.animationDelay = `${Math.random() * 5}s`;
+    
+    const colors = ['#00ffff', '#ff0080', '#8000ff', '#00ff00'];
+    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+    
+    particlesContainer.appendChild(particle);
   }
-
-  setInterval(draw, 35);
-
-  window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  });
 
   // Flujo interactivo
   const startBtn = document.getElementById("startBtn");
-  const startTitle = document.getElementById("startTitle");
+  const startMessage = document.querySelector(".start-message");
   const step1Message = document.getElementById("step1Message");
   const bonusTerminal = document.getElementById("bonusTerminal");
   const bonusMessage = document.getElementById("bonusMessage");
@@ -142,24 +356,42 @@
   const denied = document.getElementById("denied");
   const hint = document.getElementById("hint");
 
-  startBtn.style.display = "block";
-  startTitle.style.display = "block";
-
   startBtn.addEventListener("click", () => {
+    // Ocultar elementos iniciales
     startBtn.style.display = "none";
-    startTitle.style.display = "none";
+    startMessage.style.display = "none";
+    
+    // Mostrar mensaje con efecto de máquina de escribir
     step1Message.style.display = "block";
+    step1Message.classList.add("typewriter");
+    
+    // Después de que termine la animación de escritura
     setTimeout(() => {
-      step1Message.style.display = "none";
-      bonusTerminal.style.display = "block";
-    }, 2000);
+      step1Message.classList.remove("typewriter");
+      
+      // Esperar 4 segundos y luego mostrar el terminal
+      setTimeout(() => {
+        step1Message.style.display = "none";
+        bonusTerminal.style.display = "block";
+        bonusTerminal.classList.add("fade-in");
+        
+        // Enfocar el input
+        setTimeout(() => {
+          input.focus();
+        }, 100);
+      }, 4000); // 4 segundos de espera
+    }, 3000); // Tiempo de la animación de escritura
   });
 
   function typeWriter(text, element, speed = 50) {
     element.textContent = "";
     let i = 0;
     const interval = setInterval(() => {
-      element.textContent += text.charAt(i);
+      if (text.charAt(i) === '\n') {
+        element.innerHTML += '<br>';
+      } else {
+        element.textContent += text.charAt(i);
+      }
       i++;
       if (i >= text.length) clearInterval(interval);
     }, speed);
@@ -170,18 +402,40 @@
     if (val === "UN BESO") {
       denied.style.display = "none";
       hint.style.display = "none";
-      bonusTerminal.style.display = "none";
+      bonusTerminal.classList.remove("fade-in");
+      
+      setTimeout(() => {
+        bonusTerminal.style.display = "none";
 
-      const finalMessage = `Apareces después de años y la advertencia interna sigue sonando: ¡peligro!.
-Pero sabes, lo raro no es que estemos hablando otra vez....lo raro es que siga sintiendo que contigo todo puede volverse un lío divertido.
-Ahora dime, ¿seguimos siendo peligrosos o nos comportamos?`;
+        const finalMessage = `Apareces después de años y la advertencia interna sigue sonando: ¡peligro!.\nPero sabes, lo raro no es que estemos hablando otra vez....lo raro es que siga sintiendo que contigo todo puede volverse un lío divertido.\nAhora dime, ¿seguimos siendo peligrosos o nos comportamos?`;
 
-      bonusMessage.style.display = "block";
-      typeWriter(finalMessage, bonusMessage, 35);
+        bonusMessage.style.display = "block";
+        bonusMessage.classList.add("fade-in");
+        
+        // Aplicar efecto de máquina de escribir al mensaje final (25% más lento)
+        bonusMessage.textContent = "";
+        let i = 0;
+        const typeInterval = setInterval(() => {
+          if (i < finalMessage.length) {
+            bonusMessage.textContent += finalMessage.charAt(i);
+            i++;
+          } else {
+            clearInterval(typeInterval);
+          }
+        }, 44); // 35ms * 1.25 = 43.75ms ≈ 44ms
+      }, 500);
     } else {
       denied.style.display = "block";
+      denied.classList.add("fade-in");
       hint.textContent = "Pista: lo último que me diste antes de desaparecer";
       hint.style.display = "block";
+      hint.classList.add("fade-in");
+      
+      // Efecto de vibración en el input
+      input.style.animation = "shake 0.5s";
+      setTimeout(() => {
+        input.style.animation = "";
+      }, 500);
     }
   }
 
@@ -189,6 +443,18 @@ Ahora dime, ¿seguimos siendo peligrosos o nos comportamos?`;
     if (e.key === "Enter") checkWord();
   });
 
+  // Añadir estilo para la animación de vibración
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+  `;
+  document.head.appendChild(style);
 </script>
 
 </body>
