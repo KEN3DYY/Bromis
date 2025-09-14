@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Experiencia Interactiva Mejorada</title>
+<title>Experiencia Interactiva</title>
 <style>
   body {
     margin: 0;
@@ -55,12 +55,6 @@
     border-radius: 10px;
     text-align: center;
     display: none;
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
-  }
-  .terminal.show {
-    display: block;
-    opacity: 1;
   }
   input {
     background: #0D0B1D;
@@ -83,17 +77,6 @@
     white-space: pre-wrap;
     text-shadow: 0 0 15px #C0A0FF, 0 0 30px #4B9CD3;
     -webkit-text-stroke: 0.5px #4B9CD3;
-    max-height: 60vh;
-    overflow-y: auto;
-    position: relative;
-  }
-  .rastro {
-    position: absolute;
-    opacity: 0.6;
-    color: #9F6CFF;
-    text-shadow: 0 0 8px #9F6CFF, 0 0 16px #4B9CD3;
-    pointer-events: none;
-    transition: opacity 1s ease-out;
   }
   .access-denied {
     color: red;
@@ -178,36 +161,33 @@
     startBtn.style.display = "none";
     startTitle.style.display = "none";
     step1Message.style.display = "block";
+    // espera 5 segundos antes de mostrar la terminal
     setTimeout(() => {
       step1Message.style.display = "none";
-      bonusTerminal.classList.add('show');
+      bonusTerminal.style.display = "block";
       input.focus();
     }, 5000);
   });
 
-  // ===== Máquina de escribir con rastro disperso =====
   function typeWriter(text, element) {
     element.textContent = "";
     let i = 0;
     function escribir() {
       if (i < text.length) {
         const char = text.charAt(i);
-        element.textContent += char;
-
-        // Crear rastro disperso
-        const span = document.createElement('span');
-        span.className = 'rastro';
-        span.textContent = char;
-        element.appendChild(span);
-        span.style.left = (element.offsetWidth - span.offsetWidth) + 'px';
-        span.style.top = Math.random() * element.offsetHeight + 'px';
-        setTimeout(() => span.style.opacity = 0, 800);
-        setTimeout(() => span.remove(), 1200);
-
+        if (text.substring(i, i + 10) === "desaparec") {
+          element.innerHTML += '<span class="blink">' + char + '</span>';
+        } else if (text.substring(i, i + 5) === "pelig") {
+          element.innerHTML += '<span class="blink">' + char + '</span>';
+        } else {
+          element.innerHTML += char;
+        }
         i++;
-        let delay = 20 + Math.random() * 40;
+        let delay = 20 + Math.random() * 40; // más rápido
         if (char === ',' || char === '.') delay += 200;
         if (char === ' ') delay += 30;
+        if (text.substring(i-1, i+8) === "desaparec") delay += 150;
+        if (text.substring(i-1, i+5) === "pelig") delay += 150;
         setTimeout(escribir, delay);
       }
     }
@@ -219,7 +199,7 @@
     if (val === "UN BESO") {
       denied.style.display = "none";
       hint.style.display = "none";
-      bonusTerminal.classList.remove('show');
+      bonusTerminal.style.display = "none";
 
       const finalMessage = `Apareces después de años y la advertencia interna sigue sonando: ¡peligro!.\nPero sabes, lo raro no es que estemos hablando otra vez....lo raro es que siga sintiendo que contigo todo puede volverse un lío divertido.\nAhora dime, ¿seguimos siendo peligrosos o nos comportamos?`;
 
@@ -239,3 +219,4 @@
 
 </body>
 </html>
+
