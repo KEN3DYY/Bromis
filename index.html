@@ -8,7 +8,7 @@
   body {
     margin: 0;
     height: 100vh;
-    background: #0D0B1D;
+    background: black;
     font-family: "Courier New", monospace;
     display: flex;
     flex-direction: column;
@@ -26,70 +26,51 @@
     font-size: 2rem;
     text-align: center;
     display: none;
-    font-weight: 700;
-    color: #B38FFF;
-    text-shadow: 0 0 15px #B38FFF, 0 0 30px #4B9CD3;
-    -webkit-text-stroke: 0.5px #4B9CD3;
   }
-  .button-purple {
+  .button-red {
     padding: 20px 50px;
     font-size: 2rem;
     font-weight: bold;
     color: #fff;
-    background: #6A5ACD;
-    border: 3px solid #4B9CD3;
+    background: #6a0dad; /* morado */
+    border: 3px solid #00f; /* azul */
     border-radius: 10px;
     cursor: pointer;
     margin-top: 20px;
-    transition: 0.3s;
-  }
-  .button-purple:hover {
-    background: #7B68EE;
-    transform: scale(1.05);
   }
   .terminal {
     margin-top: 20px;
-    background: rgba(13,11,29,0.85);
+    background: rgba(0,0,0,0.85);
     padding: 20px;
-    border: 2px solid #4B9CD3;
+    border: 2px solid #8a2be2; /* azul/morado */
     border-radius: 10px;
     text-align: center;
     display: none;
   }
   input {
-    background: #0D0B1D;
+    background: black;
     border: none;
-    border-bottom: 2px solid #4B9CD3;
-    color: #4B9CD3;
+    border-bottom: 2px solid #7b68ee; /* morado claro */
+    color: #7b68ee;
     font-size: 1.2rem;
     text-align: center;
     outline: none;
     margin-top: 10px;
   }
-  #bonusMessage {
+  #message, #bonusMessage, #hint {
     margin-top: 30px;
     font-size: 1.5rem;
-    font-weight: 600;
-    color: #C0A0FF;
+    color: #fff;
     display: none;
     text-align: center;
     max-width: 80%;
     white-space: pre-wrap;
-    text-shadow: 0 0 15px #C0A0FF, 0 0 30px #4B9CD3;
-    -webkit-text-stroke: 0.5px #4B9CD3;
   }
   .access-denied {
-    color: red;
+    color: #ff4500;
     font-size: 1.2rem;
     margin-top: 15px;
     display: none;
-  }
-  .blink {
-    animation: blink 1s infinite;
-  }
-  @keyframes blink {
-    0%, 49% { opacity: 1; }
-    50%, 100% { opacity: 0.3; }
   }
 </style>
 </head>
@@ -98,7 +79,7 @@
 <canvas id="matrix"></canvas>
 
 <h1 id="startTitle">PRESIONA PARA VOLVER A COMENZAR</h1>
-<button id="startBtn" class="button-purple">START</button>
+<button id="startBtn" class="button-red">START</button>
 
 <h1 id="step1Message">APROPOSITO, QUE VAMOS A VOLVER A COMENZAR? JAJAJAJA</h1>
 
@@ -112,39 +93,46 @@
 <div id="bonusMessage"></div>
 
 <script>
-  // ===== Fondo Matrix con 0 y 1 =====
+  // Fondo Matrix con binario y paleta azul/morado
   const canvas = document.getElementById("matrix");
   const ctx = canvas.getContext("2d");
-  let width = canvas.width = window.innerWidth;
-  let height = canvas.height = window.innerHeight;
+  canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth;
 
-  const chars = "01".split("");
-  const font_size = 14;
-  const columns = Math.floor(width / font_size);
+  const chars = "01".split(""); // Binario
+  const font_size = 16;
+  const columns = Math.floor(canvas.width / font_size);
   const drops = Array(columns).fill(1);
 
-  function drawMatrix() {
-    ctx.fillStyle = "rgba(13,11,29,0.05)";
-    ctx.fillRect(0, 0, width, height);
-    ctx.fillStyle = "#4B9CD3";
+  const colors = ["#00f", "#7b68ee", "#8a2be2", "#4b0082"]; // azul-morado
+
+  function draw() {
+    // Fondo menos opaco para que las letras sean más visibles
+    ctx.fillStyle = "rgba(0,0,0,0.1)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
     ctx.font = font_size + "px monospace";
 
     for (let i = 0; i < drops.length; i++) {
       const text = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
       ctx.fillText(text, i * font_size, drops[i] * font_size);
-      if (drops[i] * font_size > height && Math.random() > 0.975) drops[i] = 0;
+
+      if (drops[i] * font_size > canvas.height && Math.random() > 0.975)
+        drops[i] = 0;
+
       drops[i]++;
     }
-    requestAnimationFrame(drawMatrix);
   }
-  drawMatrix();
+
+  setInterval(draw, 35);
 
   window.addEventListener('resize', () => {
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
   });
 
-  // ===== Flujo interactivo =====
+  // Flujo interactivo
   const startBtn = document.getElementById("startBtn");
   const startTitle = document.getElementById("startTitle");
   const step1Message = document.getElementById("step1Message");
@@ -161,50 +149,35 @@
     startBtn.style.display = "none";
     startTitle.style.display = "none";
     step1Message.style.display = "block";
-    // espera 5 segundos antes de mostrar la terminal
     setTimeout(() => {
       step1Message.style.display = "none";
       bonusTerminal.style.display = "block";
-      input.focus();
-    }, 5000);
+    }, 2000);
   });
 
-  function typeWriter(text, element) {
+  function typeWriter(text, element, speed = 50) {
     element.textContent = "";
     let i = 0;
-    function escribir() {
-      if (i < text.length) {
-        const char = text.charAt(i);
-        if (text.substring(i, i + 10) === "desaparec") {
-          element.innerHTML += '<span class="blink">' + char + '</span>';
-        } else if (text.substring(i, i + 5) === "pelig") {
-          element.innerHTML += '<span class="blink">' + char + '</span>';
-        } else {
-          element.innerHTML += char;
-        }
-        i++;
-        let delay = 20 + Math.random() * 40; // más rápido
-        if (char === ',' || char === '.') delay += 200;
-        if (char === ' ') delay += 30;
-        if (text.substring(i-1, i+8) === "desaparec") delay += 150;
-        if (text.substring(i-1, i+5) === "pelig") delay += 150;
-        setTimeout(escribir, delay);
-      }
-    }
-    escribir();
+    const interval = setInterval(() => {
+      element.textContent += text.charAt(i);
+      i++;
+      if (i >= text.length) clearInterval(interval);
+    }, speed);
   }
 
   function checkWord() {
-    const val = input.value.trim().toUpperCase();
+    let val = input.value.trim().toUpperCase();
     if (val === "UN BESO") {
       denied.style.display = "none";
       hint.style.display = "none";
       bonusTerminal.style.display = "none";
 
-      const finalMessage = `Apareces después de años y la advertencia interna sigue sonando: ¡peligro!.\nPero sabes, lo raro no es que estemos hablando otra vez....lo raro es que siga sintiendo que contigo todo puede volverse un lío divertido.\nAhora dime, ¿seguimos siendo peligrosos o nos comportamos?`;
+      const finalMessage = `Apareces después de años y la advertencia interna sigue sonando: ¡peligro!.
+Pero sabes, lo raro no es que estemos hablando otra vez....lo raro es que siga sintiendo que contigo todo puede volverse un lío divertido.
+Ahora dime, ¿seguimos siendo peligrosos o nos comportamos?`;
 
       bonusMessage.style.display = "block";
-      typeWriter(finalMessage, bonusMessage);
+      typeWriter(finalMessage, bonusMessage, 35);
     } else {
       denied.style.display = "block";
       hint.textContent = "Pista: lo último que me diste antes de desaparecer";
@@ -215,8 +188,8 @@
   input.addEventListener("keydown", (e) => {
     if (e.key === "Enter") checkWord();
   });
+
 </script>
 
 </body>
 </html>
-
