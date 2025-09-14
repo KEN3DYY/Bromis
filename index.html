@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Experiencia Gamer Interactiva</title>
+<title>Experiencia Interactiva con Desplazamiento</title>
 <style>
   * {
     margin: 0;
@@ -13,15 +13,16 @@
   
   body {
     margin: 0;
-    height: 100vh;
+    min-height: 100vh;
     background: linear-gradient(135deg, #0a0a1a, #000000);
     font-family: 'Courier New', monospace;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     color: #ffffff;
+    padding: 20px;
   }
   
   .gamer-bg {
@@ -69,11 +70,22 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     text-align: center;
     z-index: 1;
     width: 90%;
     max-width: 800px;
+    margin-top: 50px;
+    transition: transform 0.5s ease;
+  }
+  
+  .screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    width: 100%;
+    margin-bottom: 50px;
   }
   
   .start-message {
@@ -140,8 +152,15 @@
     width: 100%;
     max-width: 600px;
     box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
-    display: none;
     backdrop-filter: blur(10px);
+    transform: translateY(50px);
+    opacity: 0;
+    transition: all 1s ease;
+  }
+  
+  .terminal.visible {
+    transform: translateY(0);
+    opacity: 1;
   }
   
   input {
@@ -166,20 +185,27 @@
   }
   
   #bonusMessage {
-    margin-top: 30px;
+    margin: 30px 0;
     font-size: 1.6rem;
     color: #fff;
     text-align: center;
     max-width: 80%;
     white-space: pre-wrap;
     line-height: 1.6;
-    display: none;
     background: rgba(10, 10, 40, 0.9);
     padding: 25px;
     border-radius: 12px;
     border: 2px solid #ff0080;
     box-shadow: 0 0 30px rgba(255, 0, 128, 0.4);
     backdrop-filter: blur(10px);
+    transform: translateY(50px);
+    opacity: 0;
+    transition: all 1s ease;
+  }
+  
+  #bonusMessage.visible {
+    transform: translateY(0);
+    opacity: 1;
   }
   
   .access-denied {
@@ -204,7 +230,6 @@
     font-size: 2.2rem;
     text-align: center;
     margin: 20px 0;
-    display: none;
     text-shadow: 0 0 10px #ff0080, 0 0 20px #ff0080;
     padding: 25px;
     border: 2px solid #8000ff;
@@ -215,6 +240,14 @@
     font-weight: bold;
     letter-spacing: 1px;
     backdrop-filter: blur(10px);
+    transform: translateY(50px);
+    opacity: 0;
+    transition: all 1s ease;
+  }
+  
+  .message.visible {
+    transform: translateY(0);
+    opacity: 1;
   }
   
   .instruction {
@@ -239,7 +272,7 @@
   }
   
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
+    from { opacity: 0; transform: translateY(50px); }
     to { opacity: 1; transform: translateY(0); }
   }
   
@@ -259,10 +292,6 @@
     50% { transform: translateY(10vh) translateX(20vw) rotate(180deg); }
     75% { transform: translateY(20vh) translateX(-10vw) rotate(270deg); }
     100% { transform: translateY(0) translateX(0) rotate(360deg); }
-  }
-  
-  .fade-in {
-    animation: fadeIn 1s forwards;
   }
   
   .typewriter {
@@ -308,8 +337,10 @@
 </div>
 
 <div class="container">
-  <div class="start-message">PRESIONE AQUÍ PARA COMENZAR</div>
-  <button id="startBtn" class="button-red">START</button>
+  <div class="screen" id="startScreen">
+    <div class="start-message">PRESIONE AQUÍ PARA COMENZAR</div>
+    <button id="startBtn" class="button-red">START</button>
+  </div>
 
   <div class="message" id="step1Message">APROPOSITO, ¿QUE VAMOS A VOLVER A COMENZAR? JAJAJAJA</div>
 
@@ -348,7 +379,7 @@
 
   // Flujo interactivo
   const startBtn = document.getElementById("startBtn");
-  const startMessage = document.querySelector(".start-message");
+  const startScreen = document.getElementById("startScreen");
   const step1Message = document.getElementById("step1Message");
   const bonusTerminal = document.getElementById("bonusTerminal");
   const bonusMessage = document.getElementById("bonusMessage");
@@ -357,60 +388,62 @@
   const hint = document.getElementById("hint");
 
   startBtn.addEventListener("click", () => {
-    // Ocultar elementos iniciales
-    startBtn.style.display = "none";
-    startMessage.style.display = "none";
+    // Ocultar elementos iniciales con animación
+    startScreen.style.opacity = "0";
+    startScreen.style.transform = "translateY(-50px)";
+    startScreen.style.transition = "all 1s ease";
     
-    // Mostrar mensaje con efecto de máquina de escribir
-    step1Message.style.display = "block";
-    step1Message.classList.add("typewriter");
+    // Desplazar el contenedor principal hacia abajo
+    document.querySelector('.container').style.transform = "translateY(50px)";
     
-    // Después de que termine la animación de escritura
+    // Después de la animación, mostrar el primer mensaje
     setTimeout(() => {
-      step1Message.classList.remove("typewriter");
+      startScreen.style.display = "none";
+      step1Message.classList.add("visible");
       
-      // Esperar 4 segundos y luego mostrar el terminal
-      setTimeout(() => {
-        step1Message.style.display = "none";
-        bonusTerminal.style.display = "block";
-        bonusTerminal.classList.add("fade-in");
-        
-        // Enfocar el input
-        setTimeout(() => {
-          input.focus();
-        }, 100);
-      }, 4000); // 4 segundos de espera
-    }, 3000); // Tiempo de la animación de escritura
+      // Aplicar efecto de máquina de escribir al mensaje
+      step1Message.textContent = "";
+      const text = "APROPOSITO, ¿QUE VAMOS A VOLVER A COMENZAR? JAJAJAJA";
+      let i = 0;
+      const typeInterval = setInterval(() => {
+        if (i < text.length) {
+          step1Message.textContent += text.charAt(i);
+          i++;
+        } else {
+          clearInterval(typeInterval);
+          
+          // Después de 4 segundos, mostrar la terminal
+          setTimeout(() => {
+            step1Message.style.opacity = "0.7";
+            step1Message.style.transform = "translateY(-20px) scale(0.95)";
+            bonusTerminal.classList.add("visible");
+            
+            // Enfocar el input
+            setTimeout(() => {
+              input.focus();
+            }, 100);
+          }, 4000);
+        }
+      }, 50);
+    }, 1000);
   });
-
-  function typeWriter(text, element, speed = 50) {
-    element.textContent = "";
-    let i = 0;
-    const interval = setInterval(() => {
-      if (text.charAt(i) === '\n') {
-        element.innerHTML += '<br>';
-      } else {
-        element.textContent += text.charAt(i);
-      }
-      i++;
-      if (i >= text.length) clearInterval(interval);
-    }, speed);
-  }
 
   function checkWord() {
     let val = input.value.trim().toUpperCase();
     if (val === "UN BESO") {
       denied.style.display = "none";
       hint.style.display = "none";
-      bonusTerminal.classList.remove("fade-in");
+      
+      // Ocultar terminal con animación
+      bonusTerminal.style.opacity = "0";
+      bonusTerminal.style.transform = "translateY(-50px)";
       
       setTimeout(() => {
         bonusTerminal.style.display = "none";
 
         const finalMessage = `Apareces después de años y la advertencia interna sigue sonando: ¡peligro!.\nPero sabes, lo raro no es que estemos hablando otra vez....lo raro es que siga sintiendo que contigo todo puede volverse un lío divertido.\nAhora dime, ¿seguimos siendo peligrosos o nos comportamos?`;
 
-        bonusMessage.style.display = "block";
-        bonusMessage.classList.add("fade-in");
+        bonusMessage.classList.add("visible");
         
         // Aplicar efecto de máquina de escribir al mensaje final (25% más lento)
         bonusMessage.textContent = "";
@@ -426,12 +459,9 @@
       }, 500);
     } else {
       denied.style.display = "block";
-      denied.classList.add("fade-in");
       hint.textContent = "Pista: lo último que me diste antes de desaparecer";
       hint.style.display = "block";
-      hint.classList.add("fade-in");
-      
-      // Efecto de vibración en el input
+
       input.style.animation = "shake 0.5s";
       setTimeout(() => {
         input.style.animation = "";
@@ -443,7 +473,6 @@
     if (e.key === "Enter") checkWord();
   });
 
-  // Añadir estilo para la animación de vibración
   const style = document.createElement('style');
   style.textContent = `
     @keyframes shake {
